@@ -1,0 +1,11 @@
+**/Listings
+**/Objects
+**/rvmdk
+/.vscode
+*~
+*.uvguix*
+*.uvoptx*
+*.uvoptx
+*.scvd
+*.dat
+*.txt
