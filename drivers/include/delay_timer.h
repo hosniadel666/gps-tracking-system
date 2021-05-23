@@ -1,5 +1,7 @@
 #ifndef __DELAYTIMER_H__
 #define __DELAYTIMER_H__
+
+#include "TM4C123.h"
 #include <stdint.h>
 
 /**
@@ -19,4 +21,5 @@ void delay_micros(uint32_t n);
 * @return void
 */
 void delay_ms(uint32_t n);
+
 #endif

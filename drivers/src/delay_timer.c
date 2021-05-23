@@ -1,9 +1,6 @@
-#include "TM4C123.h"
-#include "delayTimer.h"
+#include "delay_timer.h"
 
-/**************************************************************
- Function Definitions
-**************************************************************/
+
 void delay_micros(uint32_t n)
 {
 	SYSCTL->RCGCTIMER |= 0x08; 	// enable clock to Timer Block 3

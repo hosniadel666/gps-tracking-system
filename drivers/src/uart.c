@@ -1,14 +1,5 @@
-#include "TM4C123.h"
-#include "UART.h"
-#include "delayTimer.h"
-#include <string.h>
-#include <stdint.h>
+#include "uart.h"
 
-#define BR 11520.0   // Baud Rate
-
-/**************************************************************
-				Function Definitions
-**************************************************************/
 
 void uart0_init(void)
 {
