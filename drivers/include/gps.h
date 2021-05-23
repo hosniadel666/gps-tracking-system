@@ -6,12 +6,17 @@
 
 #define PI 3.14159265358979323846
 
+typedef struct
+{
+    double lat;
+    double lon;
+
+} geographic_point;
+
 void gps_init();
 
-double distance_sphere(double lat1, double lon1,
-                       double lat2, double lon2);
+double distance_sphere(geographic_point *p1, geographic_point *p2);
 
-double distance_spheroid(double lat1, double lon1,
-                         double lat2, double lon2);
+double distance_spheroid(geographic_point *p1, geographic_point *p2);
 
 #endif

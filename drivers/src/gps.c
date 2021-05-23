@@ -2,27 +2,25 @@
 #include "TM4C123.h"
 #include "gps.h"
 
-
 /***********************************************************
 				Function Definitions
 ***********************************************************/
 void gps_init()
 {
-	uart0_init();
+    uart0_init();
 }
 
-double distance_sphere(double lat1, double lon1,
-                       double lat2, double lon2)
+double distance_sphere(geographic_point *p1, geographic_point *p2)
 {
     // Based on Haversine formula & Great-circle distance
     // https://en.wikipedia.org/wiki/Haversine_formula#Formulation
     // https://en.wikipedia.org/wiki/Great-circle_distance
 
     // Convert lat/long to radians
-    lat1 *= PI / 180.0;
-    lat2 *= PI / 180.0;
-    lon1 *= PI / 180.0;
-    lon2 *= PI / 180.0;
+    double lat1 = p1->lat * (PI / 180.0);
+    double lat2 = p2->lat * (PI / 180.0);
+    double lon1 = p1->lon * (PI / 180.0);
+    double lon2 = p2->lon * (PI / 180.0);
 
     double r = 6371009.0;
 
@@ -34,18 +32,17 @@ double distance_sphere(double lat1, double lon1,
     return distance;
 }
 
-double distance_spheroid(double lat1, double lon1,
-                         double lat2, double lon2)
+double distance_spheroid(geographic_point *p1, geographic_point *p2)
 {
     // Based on Vincenty's formulae using Inverse problem
     // https://en.wikipedia.org/wiki/Vincenty%27s_formulae
 
     int MAXITERS = 20;
     // Convert lat/long to radians
-    lat1 *= PI / 180.0;
-    lat2 *= PI / 180.0;
-    lon1 *= PI / 180.0;
-    lon2 *= PI / 180.0;
+    double lat1 = p1->lat * (PI / 180.0);
+    double lat2 = p2->lat * (PI / 180.0);
+    double lon1 = p1->lon * (PI / 180.0);
+    double lon2 = p2->lon * (PI / 180.0);
 
     double a = 6378137.0;      // WGS84 major axis
     double b = 6356752.314245; // WGS84 semi-major axis
