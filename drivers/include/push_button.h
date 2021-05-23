@@ -4,14 +4,14 @@
 #include "TM4C123.h"
 #include <stdint.h>
 
-typedef enum{
+typedef enum
+{
 	SW1 = 0x10,
 	SW2 = 0x01
-} pushButton;
+} push_button_t;
 
-void pushButton_init(pushButton button);
+void push_button_init(push_button_t *);
 
-int pushButton_status(pushButton button);
+int push_button_status(push_button_t *);
 
 #endif
-

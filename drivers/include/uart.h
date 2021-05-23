@@ -1,8 +1,13 @@
 #ifndef __UART_H__
 #define __UART_H__
 
-#include "TM4C123.h"
+#include <string.h>
 #include <stdint.h>
+
+#include "TM4C123.h"
+#include "delayTimer.h"
+
+#define BR 11520.0   // Baud Rate
 
 /**
 * @brief Configure the uart pins to use them

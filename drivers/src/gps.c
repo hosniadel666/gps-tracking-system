@@ -1,16 +1,12 @@
-#include <stdint.h>
-#include "TM4C123.h"
 #include "gps.h"
 
-/***********************************************************
-				Function Definitions
-***********************************************************/
+
 void gps_init()
 {
     uart0_init();
 }
 
-double distance_sphere(geographic_point *p1, geographic_point *p2)
+double distance_sphere(geographic_point_t *p1, geographic_point_t *p2)
 {
     // Based on Haversine formula & Great-circle distance
     // https://en.wikipedia.org/wiki/Haversine_formula#Formulation
@@ -32,7 +28,7 @@ double distance_sphere(geographic_point *p1, geographic_point *p2)
     return distance;
 }
 
-double distance_spheroid(geographic_point *p1, geographic_point *p2)
+double distance_spheroid(geographic_point_t *p1, geographic_point_t *p2)
 {
     // Based on Vincenty's formulae using Inverse problem
     // https://en.wikipedia.org/wiki/Vincenty%27s_formulae
