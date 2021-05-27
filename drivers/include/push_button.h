@@ -10,8 +10,8 @@ typedef enum
 	SW2 = 0x01
 } push_button_t;
 
-void push_button_init(push_button_t *);
+void push_button_init(push_button_t );
 
-int push_button_status(push_button_t *);
+int push_button_status(push_button_t );
 
 #endif

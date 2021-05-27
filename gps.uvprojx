@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -389,11 +389,6 @@
               <FilePath>.\main.c</FilePath>
             </File>
             <File>
-              <FileName>delayTimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drivers\src\delayTimer.c</FilePath>
-            </File>
-            <File>
               <FileName>display.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\drivers\src\display.c</FilePath>
@@ -409,30 +404,30 @@
               <FilePath>.\drivers\src\i2c.c</FilePath>
             </File>
             <File>
-              <FileName>leds.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drivers\src\leds.c</FilePath>
-            </File>
-            <File>
-              <FileName>pushButton.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drivers\src\pushButton.c</FilePath>
-            </File>
-            <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\drivers\src\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>delay_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\src\delay_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\src\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>push_button.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\src\push_button.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>include</GroupName>
           <Files>
-            <File>
-              <FileName>delayTimer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\drivers\include\delayTimer.h</FilePath>
-            </File>
             <File>
               <FileName>display.h</FileName>
               <FileType>5</FileType>
@@ -449,19 +444,24 @@
               <FilePath>.\drivers\include\i2c.h</FilePath>
             </File>
             <File>
-              <FileName>leds.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\drivers\include\leds.h</FilePath>
-            </File>
-            <File>
-              <FileName>pushButton.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\drivers\include\pushButton.h</FilePath>
-            </File>
-            <File>
               <FileName>uart.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\drivers\include\uart.h</FilePath>
+            </File>
+            <File>
+              <FileName>delay_timer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\include\delay_timer.h</FilePath>
+            </File>
+            <File>
+              <FileName>led.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\include\led.h</FilePath>
+            </File>
+            <File>
+              <FileName>push_button.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\include\push_button.h</FilePath>
             </File>
           </Files>
         </Group>
