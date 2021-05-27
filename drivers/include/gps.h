@@ -2,8 +2,9 @@
 #define __GPS_H__
 
 #include <stdint.h>
-#include <stdint.h>
-
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
 #include "TM4C123.h"
 #include "uart.h"
 
@@ -20,5 +21,7 @@ void gps_init();
 double distance_sphere(geographic_point_t *, geographic_point_t *);
 
 double distance_spheroid(geographic_point_t *, geographic_point_t *);
+
+geographic_point_t parser(char *);
 
 #endif

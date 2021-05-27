@@ -1,6 +1,5 @@
 #include "gps.h"
 
-
 void gps_init()
 {
     uart0_init();
@@ -120,4 +119,39 @@ double distance_spheroid(geographic_point_t *p1, geographic_point_t *p2)
 
     double distance = b * A * (sigma - deltaSigma); // (12)
     return distance;
+}
+
+
+geographic_point_t parser(char *str)
+{
+	int index = 0, counter = 0;
+	char lat[100] = "";
+    char lon[100] = "";
+
+	for (int i = 0; i < strlen(str); i++)
+	{
+		if(str[i] == ',')
+			counter++;
+		else if(counter == 2)			// latitude after 2nd comma 
+			strncat(lat, &str[i], 1);
+		else if(counter == 4)			// latitude after 4th comma 
+			strncat(lon, &str[i], 1);
+	}
+
+//	print_msg(lat);
+//	print_msg("\n\r");
+//	print_msg(lon);
+//	print_msg("\n\r");
+	
+//	char out[100];
+//	strcat(out, lat);
+//	strcat(out, ",");
+//	strcat(out, lon);
+//	print_msg(out);
+	
+	geographic_point_t p;
+//	p.lat = atof(lat);
+//	p.lon = atof(lon);
+
+	return p;
 }

@@ -11,11 +11,11 @@ typedef enum
 	GREEN = 0x08
 } led_t;
 
-void led_init(led_t *);
+void led_init(led_t );
 
-void led_on(led_t *);
+void led_on(led_t );
 
-void led_off(led_t *);
+void led_off(led_t );
 
 void all_on();
 
