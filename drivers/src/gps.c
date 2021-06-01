@@ -166,12 +166,16 @@ geographic_point_t get_geographic_point()
     char lat[30] = "";
     char lon[30] = "";
     char time[30] = "";
+    int8_t vaild = 0;
+
     for (int i = 0, n = strlen(sentence); i < n; i++)
     {
         if (sentence[i] == ',')
             comma_i++;
         else if (comma_i == 1) // time after 2nd comma
             time[time_i++] = sentence[i];
+        else if (comma_i == 1) // Active after 2nd comma
+            sentence[i] == 'A' ? vaild = 1 : 1;
         else if (comma_i == 3) // latitude after 3rd comma
             lat[lat_i++] = sentence[i];
         else if (comma_i == 5) // longitude after 5th comma
@@ -183,6 +187,7 @@ geographic_point_t get_geographic_point()
     lon[lon_i] = '\0';
 
     geographic_point_t p;
+    p.is_vaild = vaild;
     p.lat = parse_degree(lat);
     p.lon = parse_degree(lon);
     p.time = get_time(time);
