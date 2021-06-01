@@ -98,7 +98,7 @@ double distance_spheroid(geographic_point_t *p1, geographic_point_t *p2)
                                                 (-1.0 + 2.0 * cos2SM * cos2SM))); // (7)
 
         delta = (lambda - lambdaOrig) / lambda;
-        if (abs(delta) < 1.0e-12)
+        if (fabs(delta) < 1.0e-12)
             break;
     }
 
@@ -121,37 +121,132 @@ double distance_spheroid(geographic_point_t *p1, geographic_point_t *p2)
     return distance;
 }
 
-
 geographic_point_t parser(char *str)
 {
-	int index = 0, counter = 0;
-	char lat[100] = "";
+    int index = 0, counter = 0;
+    char lat[100] = "";
     char lon[100] = "";
 
-	for (int i = 0; i < strlen(str); i++)
-	{
-		if(str[i] == ',')
-			counter++;
-		else if(counter == 2)			// latitude after 2nd comma 
-			strncat(lat, &str[i], 1);
-		else if(counter == 4)			// latitude after 4th comma 
-			strncat(lon, &str[i], 1);
-	}
+    for (int i = 0; i < strlen(str); i++)
+    {
+        if (str[i] == ',')
+            counter++;
+        else if (counter == 2) // latitude after 2nd comma
+            strncat(lat, &str[i], 1);
+        else if (counter == 4) // latitude after 4th comma
+            strncat(lon, &str[i], 1);
+    }
 
-//	print_msg(lat);
-//	print_msg("\n\r");
-//	print_msg(lon);
-//	print_msg("\n\r");
-	
-//	char out[100];
-//	strcat(out, lat);
-//	strcat(out, ",");
-//	strcat(out, lon);
-//	print_msg(out);
-	
-	geographic_point_t p;
-//	p.lat = atof(lat);
-//	p.lon = atof(lon);
+    //	print_msg(lat);
+    //	print_msg("\n\r");
+    //	print_msg(lon);
+    //	print_msg("\n\r");
 
-	return p;
+    //	char out[100];
+    //	strcat(out, lat);
+    //	strcat(out, ",");
+    //	strcat(out, lon);
+    //	print_msg(out);
+
+    geographic_point_t p;
+    //	p.lat = atof(lat);
+    //	p.lon = atof(lon);
+
+    return p;
+}
+
+// recvives RMC sentence and parse a geographic_point from the gps
+geographic_point_t get_geographic_point()
+{
+    char *sentence = get_sentence();
+    int time_i = 0,
+        lat_i = 0,
+        lon_i = 0,
+        comma_i = 0;
+    char lat[30] = "";
+    char lon[30] = "";
+    char time[30] = "";
+    for (int i = 0, n = strlen(sentence); i < n; i++)
+    {
+        if (sentence[i] == ',')
+            comma_i++;
+        else if (comma_i == 1) // time after 2nd comma
+            time[time_i++] = sentence[i];
+        else if (comma_i == 3) // latitude after 3rd comma
+            lat[lat_i++] = sentence[i];
+        else if (comma_i == 5) // longitude after 5th comma
+            lon[lon_i++] = sentence[i];
+    }
+
+    time[time_i] = '\0';
+    lat[lat_i] = '\0';
+    lon[lon_i] = '\0';
+
+    geographic_point_t p;
+    p.lat = parse_degree(lat);
+    p.lon = parse_degree(lon);
+    p.time = get_time(time);
+
+    free(sentence);
+    return p;
+}
+
+// recvives an RMS sentence form gps om URAT1
+// sentence should be freed by the caller
+char *get_sentence()
+{
+    char data, RMC_code[3];
+    char *buffer = (char *)malloc(100 * sizeof(char));
+    unsigned char is_RMC_string = 0;
+    unsigned char RMC_index = 0;
+    unsigned char is_RMC_received_completely = 0;
+
+    while (1)
+    {
+        data = uart1_rx();
+
+        if (data == '$')
+        {
+            is_RMC_string = 0;
+            RMC_index = 0;
+        }
+        else if (is_RMC_string == 1)
+        {
+            buffer[RMC_index++] = data;
+            if (data == '\n')
+                is_RMC_received_completely = 1;
+        }
+        else if (RMC_code[0] == 'R' && RMC_code[1] == 'M' && RMC_code[2] == 'C')
+        {
+            is_RMC_string = 1;
+            RMC_code[0] = 0;
+            RMC_code[0] = 0;
+            RMC_code[0] = 0;
+        }
+        else
+        {
+            RMC_code[0] = RMC_code[1];
+            RMC_code[1] = RMC_code[2];
+            RMC_code[2] = data;
+        }
+        if (is_RMC_received_completely == 1)
+        {
+            buffer[RMC_index] = '\0';
+            return buffer;
+        }
+    }
+}
+
+// parse degree form dddmm.mmmm to decimal degree
+float parse_degree(char *degree_str)
+{
+    float raw_degree = atof(degree_str);
+    int left_degree = atoi(degree_str);
+    int left_mins = left_degree % 100;
+    float degree = left_degree / 100;
+
+    float mins = left_mins + raw_degree - left_degree;
+    degree += mins / 60.0;
+
+    return degree;
 }
