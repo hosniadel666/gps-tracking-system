@@ -9,3 +9,7 @@
 *.scvd
 *.dat
 *.txt
+
+
+*local_main.c
+*.out
