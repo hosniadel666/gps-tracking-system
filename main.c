@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+
 #include "TM4C123.h"
 #include "push_button.h"
 #include "delay_timer.h"
@@ -8,54 +9,55 @@
 #include "gps.h"
 #include "uart.h"
 
+#define MAX_INVAILD 10
+#define MAX_DISTANCE 100.0
+
 int main(void)
-{	
-	
+{
+
 	uart1_init();
 	uart0_init();
-	
-	geographic_point_t point;
-	char data, buffer[100], RMC_code[3];
-	unsigned char is_RMC_string = 0;
-	unsigned char RMC_index = 0;
-	unsigned char is_RMC_received_completely = 0;
 
-	while(1)
+	geographic_point_t curr_p;
+	geographic_point_t last_p;
+
+	float distance = 0.0;
+	int num_invaild = 0;
+
+	// wait untail gps is active
+	last_p = get_geographic_point();
+	while (!last_p.is_vaild)
+		last_p = get_geographic_point();
+
+	while (1)
 	{
-		data = uart1_rx();			
-	
-		if(data == '$')
+		curr_p = get_geographic_point();
+		if (curr_p.is_vaild)
 		{
-			is_RMC_string = 0;
-			RMC_index = 0;
-		}
-		else if(is_RMC_string ==1)
-		{
-			buffer[RMC_index++] = data;
-			//uart0_tx(dat);
-			if(data == '\n')
-				is_RMC_received_completely = 1;
-		}
-		else if(RMC_code[0] == 'R' && RMC_code[1] == 'M' && RMC_code[2] == 'C')
-		{
-			is_RMC_string = 1;
-			RMC_code[0] = 0; 
-			RMC_code[0] = 0;
-			RMC_code[0] = 0;		
+			num_invaild--;
+			distance += distance_sphere(&last_p, &curr_p);
+			last_p = curr_p;
 		}
 		else
 		{
-			RMC_code[0] = RMC_code[1];
-			RMC_code[1] = RMC_code[2];
-			RMC_code[2] = data;
+			num_invaild++;
 		}
-		if(is_RMC_received_completely == 1){
 
-			print_msg(buffer);
-			print_msg("\n\r");
-			point = parser(buffer);
-			is_RMC_received_completely = 0;
+		// reached the requird destination
+		if (distance >= MAX_DISTANCE)
+		{
+			led_on(RED);
+		}
+
+		// chech for GPS faults limits
+		if (num_invaild < 0)
+		{
+			num_invaild = 0;
+		}
+		else if (num_invaild >= MAX_INVAILD)
+		{
+			num_invaild = MAX_INVAILD;
+			// display error "gps has stoped"
 		}
 	}
-
 }
