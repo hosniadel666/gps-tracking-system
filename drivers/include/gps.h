@@ -14,6 +14,7 @@
 
 typedef struct
 {
+    int8_t is_vaild;
     double lat;
     double lon;
     time_pt time;
