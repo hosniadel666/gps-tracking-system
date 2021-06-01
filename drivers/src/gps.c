@@ -196,6 +196,7 @@ geographic_point_t get_geographic_point()
     return p;
 }
 
+
 // recvives an RMS sentence form gps om URAT1
 // sentence should be freed by the caller
 char *get_sentence()
@@ -246,12 +247,9 @@ char *get_sentence()
 float parse_degree(char *degree_str)
 {
     float raw_degree = atof(degree_str);
-    int left_degree = atoi(degree_str);
-    int left_mins = left_degree % 100;
-    float degree = left_degree / 100;
-
-    float mins = left_mins + raw_degree - left_degree;
-    degree += mins / 60.0;
-
+	int dd = (int) (raw_degree / 100);
+    double ss = raw_degree - (dd * 100);
+    double degree = dd + (ss / 60);
+	
     return degree;
 }

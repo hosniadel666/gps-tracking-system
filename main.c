@@ -14,7 +14,6 @@
 
 int main(void)
 {
-
 	uart1_init();
 	uart0_init();
 
@@ -61,3 +60,4 @@ int main(void)
 		}
 	}
 }
+
