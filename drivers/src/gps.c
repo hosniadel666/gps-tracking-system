@@ -72,7 +72,7 @@ double distance_spheroid(geographic_point_t *p1, geographic_point_t *p2)
     double C = 0.0;
 
     double lambda = L; // initial guess
-    for (int iter = 0; iter < MAXITERS; iter++)
+    for (uint32_t iter = 0; iter < MAXITERS; iter++)
     {
         lambdaOrig = lambda;
         sinLambda = sin(lambda);
@@ -121,77 +121,39 @@ double distance_spheroid(geographic_point_t *p1, geographic_point_t *p2)
     return distance;
 }
 
-geographic_point_t parser(char *str)
-{
-    int index = 0, counter = 0;
-    char lat[100] = "";
-    char lon[100] = "";
-
-    for (int i = 0; i < strlen(str); i++)
-    {
-        if (str[i] == ',')
-            counter++;
-        else if (counter == 2) // latitude after 2nd comma
-            strncat(lat, &str[i], 1);
-        else if (counter == 4) // latitude after 4th comma
-            strncat(lon, &str[i], 1);
-    }
-
-    //	print_msg(lat);
-    //	print_msg("\n\r");
-    //	print_msg(lon);
-    //	print_msg("\n\r");
-
-    //	char out[100];
-    //	strcat(out, lat);
-    //	strcat(out, ",");
-    //	strcat(out, lon);
-    //	print_msg(out);
-
-    geographic_point_t p;
-    //	p.lat = atof(lat);
-    //	p.lon = atof(lon);
-
-    return p;
-}
-
 // recvives RMC sentence and parse a geographic_point from the gps
 geographic_point_t get_geographic_point()
 {
     char *sentence = get_sentence();
-    int time_i = 0,
+    uint32_t time_i = 0,
         lat_i = 0,
         lon_i = 0,
         comma_i = 0;
     char lat[30] = "";
     char lon[30] = "";
     char time[30] = "";
-    int8_t vaild = 0;
+    int8_t valid = 0;
 
-    for (int i = 0, n = strlen(sentence); i < n; i++)
+    for (uint32_t i = 0, n = strlen(sentence); i < n; i++)
     {
         if (sentence[i] == ',')
             comma_i++;
-        else if (comma_i == 1) // time after 2nd comma
+        else if (comma_i == 0) // time at the begining
             time[time_i++] = sentence[i];
-        else if (comma_i == 1) // Active after 2nd comma
-            sentence[i] == 'A' ? vaild = 1 : 1;
-        else if (comma_i == 3) // latitude after 3rd comma
+        else if (comma_i == 1) // Active after 1st comma
+            valid = (sentence[i] == 'A')? 1 : 0;
+        else if (comma_i == 2) // latitude after 2nd comma
             lat[lat_i++] = sentence[i];
-        else if (comma_i == 5) // longitude after 5th comma
+        else if (comma_i == 4) // longitude after 4th comma
             lon[lon_i++] = sentence[i];
     }
-
-    time[time_i] = '\0';
-    lat[lat_i] = '\0';
-    lon[lon_i] = '\0';
-
+	
     geographic_point_t p;
-    p.is_vaild = vaild;
+    p.is_vaild = valid;
     p.lat = parse_degree(lat);
     p.lon = parse_degree(lon);
     p.time = get_time(time);
-
+	
     free(sentence);
     return p;
 }
@@ -202,7 +164,7 @@ geographic_point_t get_geographic_point()
 char *get_sentence()
 {
     char data, RMC_code[3];
-    char *buffer = (char *)malloc(100 * sizeof(char));
+	char *buffer = (char *)malloc(100 * sizeof(char));
     unsigned char is_RMC_string = 0;
     unsigned char RMC_index = 0;
     unsigned char is_RMC_received_completely = 0;
@@ -237,14 +199,14 @@ char *get_sentence()
         }
         if (is_RMC_received_completely == 1)
         {
-            buffer[RMC_index] = '\0';
+			buffer[RMC_index] = '\0';
             return buffer;
         }
     }
 }
 
 // parse degree form dddmm.mmmm to decimal degree
-float parse_degree(char *degree_str)
+double parse_degree(char *degree_str)
 {
     float raw_degree = atof(degree_str);
 	int dd = (int) (raw_degree / 100);

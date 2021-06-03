@@ -30,7 +30,7 @@ geographic_point_t parser(char *);
 
 geographic_point_t get_geographic_point();
 
-float parse_degree(char *);
+double parse_degree(char *);
 
 char *get_sentence();
 

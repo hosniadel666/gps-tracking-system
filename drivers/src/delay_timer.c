@@ -33,3 +33,10 @@ void delay_ms(uint32_t n)
 		TIMER3->ICR = 0x100; 				 // clear the TimerB timeout flag
 	}
 }
+
+void delay_lcd(uint32_t d) {
+	uint32_t i;
+	for(i = 0; i < d; i++) {
+		__asm__("nop");
+	}
+}
