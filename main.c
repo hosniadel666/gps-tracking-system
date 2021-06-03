@@ -36,7 +36,11 @@ int main(void)
 	
     // wait untail gps is active
     last_p = get_geographic_point();
-	int counter = 0;
+	while (!last_p.is_vaild)
+	{
+		last_p = get_geographic_point();
+		searching_mode();
+	}
 
     while (1)
     {
@@ -49,7 +53,7 @@ int main(void)
             distance += distance_sphere(&last_p, &curr_p);
 
 			display_distance(distance);
-			
+		
             last_p = curr_p;
 			num_invaild--;
         }
@@ -79,6 +83,7 @@ int main(void)
         }
     }
 }
+
 uint32_t is_final_destination(double distance,double target)
 {
 	uint32_t status = (distance >= target)? 1: 0;
@@ -97,6 +102,7 @@ void display_distance(double distance)
 	sprintf(lcd_distance, "%0.4f m",distance);
 	lcd_print(lcd_distance, strlen(lcd_distance));
 }
+
 void searching_mode()
 {
 	static int counter = 0;
