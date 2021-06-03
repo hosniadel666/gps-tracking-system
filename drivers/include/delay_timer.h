@@ -22,4 +22,6 @@ void delay_micros(uint32_t n);
 */
 void delay_ms(uint32_t n);
 
+
+void delay_lcd(uint32_t d);
 #endif

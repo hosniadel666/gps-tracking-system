@@ -1,6 +1,5 @@
 #include "uart.h"
 
-
 void uart0_init(void)
 {
 	double I_FBRD;
@@ -30,13 +29,11 @@ void uart0_init(void)
 	delay_ms(1); 		   // wait for output line to stabilize 
 }
 
-
 void uart0_tx(uint8_t c)
 {
 	while((UART0->FR & 0x20) != 0); // wait until Tx buffer not full 
 	UART0->DR = c; 					// before giving it another byte 
 }
-
 
 uint8_t uart0_rx(void)
 {
@@ -51,11 +48,11 @@ uint8_t uart0_rx(void)
 void uart1_init(void)
 {
 	double I_FBRD;
-	SYSCTL->RCGCUART |= 2; // provide clock to UART0 
-	SYSCTL->RCGCGPIO |= 2; // enable clock to PORTA 
+	SYSCTL->RCGCUART |= 2; // provide clock to UART1 
+	SYSCTL->RCGCGPIO |= 2; // enable clock to PORTB 
 	
-	// UART0 initialization 
-	UART1->CTL = 0; 	   // disable UART0 
+	// UART1 initialization 
+	UART1->CTL = 0; 	   // disable UART1
 	
 	I_FBRD = (16000000 / 16.0) / BR;
 	UART1->IBRD = (uint32_t) I_FBRD;	// Integer baudrate devisor
@@ -66,13 +63,12 @@ void uart1_init(void)
 	UART1->CC = 0; 		   // use system clock 
 	
 	UART1->LCRH = 0x60;    // 8-bit, no parity, 1-stop bit, no FIFO 
-	UART1->CTL = 0x301;    // enable UART0, TXE, RXE 
+	UART1->CTL = 0x301;    // enable UART1, TXE, RXE 
 
-	
-	// UART0 TX0 and RX0 use PA0 and PA1. Set them up. 
-	GPIOB->DEN = 0x03; 	   // Make PA0 and PA1 as digital 
-	GPIOB->AFSEL = 0x03;   // Use PA0,PA1 alternate function 
-	GPIOB->PCTL = 0x11;    // configure PA0 and PA1 for UART 
+	// UART1 TX1 and RX1 use PB0 and PB1. Set them up. 
+	GPIOB->DEN = 0x03; 	   // Make PB0 and PB1 as digital 
+	GPIOB->AFSEL = 0x03;   // Use PB0,PB1 alternate function 
+	GPIOB->PCTL = 0x11;    // configure PB0 and PB1 for UART 
 	
 	delay_ms(1); 		   // wait for output line to stabilize 
 }
