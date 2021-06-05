@@ -212,6 +212,6 @@ double parse_degree(char *degree_str)
 	int dd = (int) (raw_degree / 100);
     double ss = raw_degree - (dd * 100);
     double degree = dd + (ss / 60);
-	
+	degree = ((int) (degree * 10000)) / 10000.0;
     return degree;
 }

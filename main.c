@@ -12,6 +12,7 @@
 #define MAX_INVAILD  10
 #define MAX_DISTANCE 100.0
 
+void system_gpio_init();
 uint32_t is_final_destination(double ,double);
 void searching_mode();
 void reading_mode();
@@ -20,12 +21,7 @@ void display_distance(double );
 
 int main(void)
 {
-    uart1_init();
-    uart0_init();
-	lcd_init();
-	led_init(RED);
-	led_init(GREEN);
-	led_init(BLUE);
+	system_gpio_init();
 
     geographic_point_t curr_p;
     geographic_point_t last_p;
@@ -47,9 +43,6 @@ int main(void)
         curr_p = get_geographic_point();
         if (curr_p.is_vaild)
         {
-			if(!reach_target)
-				reading_mode();
-
             distance += distance_sphere(&last_p, &curr_p);
 
 			display_distance(distance);
@@ -83,7 +76,13 @@ int main(void)
         }
     }
 }
-
+void system_gpio_init()
+{
+	uart0_init();	// For communication btw PC and tiva
+	uart1_init();	// For communication btw tiva and gps module 
+	lcd_init();		// For displaying measured data
+	led_init(RED | GREEN | BLUE);
+}
 uint32_t is_final_destination(double distance,double target)
 {
 	uint32_t status = (distance >= target)? 1: 0;
