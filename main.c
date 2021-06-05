@@ -97,6 +97,9 @@ void display_distance(double distance)
 	sprintf(lcd_distance, "Distance:");
 	lcd_set_cursor(0, 0);
 	lcd_print(lcd_distance, strlen(lcd_distance));
+	lcd_print(lcd_distance, strlen(lcd_distance));
+	sprintf(lcd_distance, "<G16>");
+	lcd_set_cursor(0, 11);
 	lcd_set_cursor(1, 3);
 	sprintf(lcd_distance, "%0.4f m",distance);
 	lcd_print(lcd_distance, strlen(lcd_distance));
@@ -143,4 +146,3 @@ void reaching_mode()
 	all_off();
 	led_on(RED);
 }
-
