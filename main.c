@@ -13,8 +13,7 @@
 #define MAX_DISTANCE 100.0
 
 int main(void)
-{
-
+{	
 	uart1_init();
 	uart0_init();
 
@@ -61,3 +60,4 @@ int main(void)
 		}
 	}
 }
+
