@@ -1,7 +1,6 @@
 #include "stdint.h"
 #include "tm4c123gh6pm.h"
 
-void SystemInit(){}
 	
 void lcd_command(unsigned char command){
 		GPIO_PORTA_DATA_R = 0;
@@ -41,7 +40,7 @@ void init(){
 }
 	
 	
-int main(){
+int test_main(){
 
 	init();
 	while(1){
