@@ -1,8 +1,45 @@
 #include "gps.h"
 
-void gps_init()
+void gps_init(void)
 {
-    uart0_init();
+	double I_FBRD;
+	SYSCTL->RCGCUART |= 0x02; // provide clock to UART1 
+	SYSCTL->RCGCGPIO |= 0x02; // enable clock to PORTB 
+	
+	UART1->CTL = 0; 	   // disable UART1
+	
+	I_FBRD = (16000000 / 16.0) / BR;
+	UART1->IBRD = (uint32_t) I_FBRD;	
+	I_FBRD = (I_FBRD - (uint32_t)I_FBRD) * 1000;
+	
+	UART1->FBRD = (uint32_t) I_FBRD;    
+	UART1->CC = 0; 		   // use system clock 
+	UART1->LCRH = 0x60;    // 8-bit, no parity, 1-stop bit, no FIFO 
+	UART1->CTL = 0x301;    // enable UART1, TXE, RXE 
+ 
+	GPIOB->DEN = 0x03; 	   // Make PB0 and PB1 as digital 
+	GPIOB->AFSEL = 0x03;   // Use PB0,PB1 alternate function 
+	GPIOB->PCTL = 0x11;    // configure PB0 and PB1 for UART 
+	
+	delay_ms(1); 		   // wait for output line to stabilize 
+}
+
+void gps_send_byte(uint8_t c)
+{
+	while((UART1->FR & 0x20) != 0)
+		; // wait until Tx buffer not full 
+	UART1->DR = c; 					// before giving it another byte 
+}
+
+uint8_t gps_read_byte(void)
+{
+	uint8_t c;
+	
+	while((UART1->FR & 0x10) != 0)
+		; // wait until the buffer is not empty 
+	c = UART1->DR; 					// read the received data 
+	
+	return c; 
 }
 
 double distance_sphere(geographic_point_t *p1, geographic_point_t *p2)
@@ -125,10 +162,7 @@ double distance_spheroid(geographic_point_t *p1, geographic_point_t *p2)
 geographic_point_t get_geographic_point()
 {
     char *sentence = get_sentence();
-    uint32_t time_i = 0,
-        lat_i = 0,
-        lon_i = 0,
-        comma_i = 0;
+    uint32_t time_i = 0, lat_i = 0, lon_i = 0, comma_i = 0;
     char lat[30] = "";
     char lon[30] = "";
     char time[30] = "";
@@ -171,7 +205,7 @@ char *get_sentence()
 
     while (1)
     {
-        data = uart1_rx();
+        data = gps_read_byte();
 
         if (data == '$')
         {
@@ -212,6 +246,6 @@ double parse_degree(char *degree_str)
 	int dd = (int) (raw_degree / 100);
     double ss = raw_degree - (dd * 100);
     double degree = dd + (ss / 60);
-	degree = ((int) (degree * 10000)) / 10000.0;
+
     return degree;
 }

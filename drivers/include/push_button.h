@@ -14,4 +14,4 @@ void push_button_init(push_button_t);
 
 int push_button_status(push_button_t);
 
-#endif
+#endif //__PUSHBUTTON__

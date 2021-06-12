@@ -9,6 +9,7 @@
 #include "gps.h"
 #include "uart.h"
 #include "interrupt.h"
+#include "bluetooth.h"
 
 #define MAX_INVAILD 10
 #define MAX_DISTANCE 100.0
@@ -30,13 +31,13 @@ int main(void)
 
     geographic_point_t curr_p;
     geographic_point_t last_p;
-
     double distance = 0.0;
     int32_t num_invaild = 0;
     uint32_t reach_target = 0;
 
     // wait untail gps is active
     last_p = get_geographic_point();
+
     while (!last_p.is_vaild)
     {
         last_p = get_geographic_point();
@@ -45,21 +46,17 @@ int main(void)
 
     while (1)
     {
-#ifdef USING_WAITING_MODE
-        // wait until push button SW1 pressed
-        if (!ready_to_walk)
-        {
-            waiting_mode();
-            continue;
-        }
-#endif
-
         curr_p = get_geographic_point();
         if (curr_p.is_vaild)
         {
             distance += distance_sphere(&last_p, &curr_p);
-
+			
             display_distance(distance);
+			char bluetooth_msg[30];
+		
+			sprintf(bluetooth_msg, "%f,%f\n", curr_p.lat, curr_p.lon);
+			bluetooth_send_msg(bluetooth_msg);
+			print_msg(bluetooth_msg);
 
             last_p = curr_p;
             num_invaild--;
@@ -76,6 +73,7 @@ int main(void)
         {
             reaching_mode();
             reach_target = 1;
+			print_msg("end\n");
         }
 
         // check for GPS faults limits
@@ -90,19 +88,19 @@ int main(void)
             
             lcd_clean();
             lcd_set_cursor(0, 0);
-            char *stop_message = "Error: GPS Stoped";
-            lcd_print(stop_message, sizeof(stop_message));
+            char stop_message[20];
+			sprintf(stop_message, "Error: GPS Stoped");
+            lcd_print(stop_message, strlen(stop_message));
         }
     }
 }
 void system_gpio_init()
 {
-    uart0_init(); // For communication btw PC and tiva
-    uart1_init(); // For communication btw tiva and gps module
+    terminal_init(); // For communication btw PC and tiva
+    gps_init(); // For communication btw tiva and gps module
     lcd_init();   // For displaying measured data
-
-    portf_pb_interrupt_init(SW1); // Enable Intruupt on pushbutton 1
-
+	bluetooth_init();
+    //portf_pb_interrupt_init(SW1); // Enable Intruupt on pushbutton 1
     led_init(RED | GREEN | BLUE); // Initialize all leds
 }
 
@@ -111,7 +109,7 @@ void display_distance(double distance)
     char lcd_distance[20];
 
     lcd_clean();
-
+	
     sprintf(lcd_distance, "Distance:");
     lcd_set_cursor(0, 0);
     lcd_print(lcd_distance, strlen(lcd_distance));
@@ -148,9 +146,9 @@ void searching_mode()
     led_on(GREEN);
 
     // I also don't like this delay # hassan
-    // delay_ms(400);
-    // led_off(GREEN);
-    // delay_ms(400);
+     delay_ms(400);
+     led_off(GREEN);
+     delay_ms(400);
 
     if (counter == 1)
     {
@@ -181,9 +179,9 @@ void reading_mode()
     all_off();
     led_on(BLUE);
     // I don't like this delay # hassan
-    // delay_ms(400);
-    // led_off(BLUE);
-    // delay_ms(400);
+    delay_ms(400);
+    led_off(BLUE);
+    delay_ms(400);
 }
 
 void reaching_mode()

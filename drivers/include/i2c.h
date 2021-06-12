@@ -6,4 +6,4 @@ int i2c1_wait_till_done(void);
 char i2c1_byteWrite(int , char , char );
 char i2c1_read(int , char , int , char* );
 
-#endif
+#endif // __I2C__

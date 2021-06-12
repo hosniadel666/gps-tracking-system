@@ -39,4 +39,14 @@ void bluetooth_send_byte(uint8_t c);
  */
 uint8_t bluetooth_read_byte(void);
 
+/**
+ * @brief send array of bytes
+ *
+ * @param poiter to char
+ *
+ * @return void
+ */
+void bluetooth_send_msg(char *msg);
+ 
+ 
 #endif // __BLUETOOTH__

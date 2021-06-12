@@ -19,4 +19,4 @@ time_pt get_time(char *);
 
 float time_difference(time_pt *, time_pt *);
 
-#endif
+#endif // __TIME__

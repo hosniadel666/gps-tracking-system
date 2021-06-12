@@ -44,4 +44,5 @@ void lcd_write_command(uint8_t );
 void lcd_write_character(uint8_t );
 void lcd_print(char *, uint32_t );
 void lcd_clean();
-#endif
+
+#endif // __DISPLAY__

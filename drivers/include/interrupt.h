@@ -8,4 +8,4 @@ void portf_pb_interrupt_init(push_button_t);
 
 void GPIOF_Handler();
 
-#endif
+#endif // __INTERRUPT__

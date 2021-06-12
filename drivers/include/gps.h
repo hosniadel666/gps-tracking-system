@@ -22,6 +22,10 @@ typedef struct
 
 void gps_init();
 
+void gps_send_byte(uint8_t c);
+
+uint8_t gps_read_byte(void);
+
 double distance_sphere(geographic_point_t *, geographic_point_t *);
 
 double distance_spheroid(geographic_point_t *, geographic_point_t *);
@@ -34,4 +38,4 @@ double parse_degree(char *);
 
 char *get_sentence();
 
-#endif
+#endif // __GPS__
