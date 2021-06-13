@@ -79,11 +79,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
-                for (location in locationResult.locations) {
-                    latLngList.add(LatLng(location.latitude, location.longitude))
-                    polyline?.points = latLngList
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngList.last()))
-                }
+                return
+//                for (location in locationResult.locations) {
+//                    latLngList.add(LatLng(location.latitude, location.longitude))
+//                    polyline?.points = latLngList
+//                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngList.last()))
+//                }
             }
         }
 
@@ -151,7 +152,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 polyline?.points = latLngList
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngList.last(), 20F))
             } else {
-                updateFromLastKnownLocation()
+//                updateFromLastKnownLocation()
             }
         }
 
@@ -196,6 +197,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private inner class ConnectThread : Thread() {
         private lateinit var connectedThread: MyBluetoothService.ConnectedThread
 
+        private val stringBuilder = StringBuilder()
+
         override fun run() {
             var found = false
 
@@ -216,6 +219,45 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                                 connectedThread =
                                     MyBluetoothService(HandlerCompat.createAsync(Looper.getMainLooper()) { message ->
                                         Log.v("MainLooperMessage", message.toString())
+
+                                        stringBuilder.append(
+                                            (message.obj as ByteArray).toString(
+                                                Charsets.US_ASCII
+                                            )
+                                        )
+
+                                        var startIdx = stringBuilder.indexOf('$')
+                                        var endIdx = stringBuilder.indexOf('@', startIdx)
+
+                                        while (startIdx != -1 && endIdx != -1) {
+                                            val str =
+                                                stringBuilder.removeRange(startIdx, endIdx + 1)
+                                            val crd = str.split(',')
+
+                                            if (crd.size == 2) {
+                                                val lat = crd[0].toDoubleOrNull()
+                                                val lng = crd[1].toDoubleOrNull()
+
+                                                if (lat != null && lng != null) {
+                                                    latLngList.add(
+                                                        LatLng(
+                                                            lat,
+                                                            lng
+                                                        )
+                                                    )
+                                                    polyline?.points = latLngList
+                                                    mMap.moveCamera(
+                                                        CameraUpdateFactory.newLatLng(
+                                                            latLngList.last()
+                                                        )
+                                                    )
+                                                }
+                                            }
+
+                                            startIdx = stringBuilder.indexOf('$')
+                                            endIdx = stringBuilder.indexOf('@', startIdx)
+                                        }
+
                                         true
                                     }).ConnectedThread(
                                         sock
@@ -261,7 +303,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                updateFromLastKnownLocation()
+//                updateFromLastKnownLocation()
             }
         }
     }
