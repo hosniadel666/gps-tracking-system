@@ -438,6 +438,11 @@
               <FileType>1</FileType>
               <FilePath>.\drivers\src\bluetooth.c</FilePath>
             </File>
+            <File>
+              <FileName>ultrasonic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\src\ultrasonic.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -492,6 +497,11 @@
               <FileName>bluetooth.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\drivers\include\bluetooth.h</FilePath>
+            </File>
+            <File>
+              <FileName>ultrasonic.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\include\ultrasonic.h</FilePath>
             </File>
           </Files>
         </Group>
