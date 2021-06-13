@@ -13,7 +13,6 @@
 
 #define MAX_INVAILD 10
 #define MAX_DISTANCE 100.0
-
 #define USING_WAITING_MODE
 
 extern int8_t ready_to_walk;
@@ -23,6 +22,7 @@ void waiting_mode();
 void searching_mode();
 void reading_mode();
 void reaching_mode();
+void error_mode();
 void display_distance(double);
 
 int main(void)
@@ -37,7 +37,7 @@ int main(void)
 
     // wait untail gps is active
     last_p = get_geographic_point();
-
+	
     while (!last_p.is_vaild)
     {
         last_p = get_geographic_point();
@@ -46,6 +46,15 @@ int main(void)
 
     while (1)
     {
+#ifdef USING_WAITING_MODE
+        // wait until push button SW1 pressed
+        if (!ready_to_walk)
+        {
+            waiting_mode();
+            continue;
+        }
+#endif
+		
         curr_p = get_geographic_point();
         if (curr_p.is_vaild)
         {
@@ -55,8 +64,8 @@ int main(void)
 			char bluetooth_msg[30];
 		
 			sprintf(bluetooth_msg, "%f,%f\n", curr_p.lat, curr_p.lon);
-			bluetooth_send_msg(bluetooth_msg);
-			print_msg(bluetooth_msg);
+			bluetooth_send_msg(bluetooth_msg);	// Send coordinates to bluetooth module
+			print_msg(bluetooth_msg); 			// Send coordinates to PC at real time
 
             last_p = curr_p;
             num_invaild--;
@@ -73,7 +82,7 @@ int main(void)
         {
             reaching_mode();
             reach_target = 1;
-			print_msg("end\n");
+			print_msg("end\n"); // send end to pc to draw the stored coordinates
         }
 
         // check for GPS faults limits
@@ -85,25 +94,22 @@ int main(void)
         {
             // GPS has reached the max invaild points 
             num_invaild = MAX_INVAILD;
-            
-            lcd_clean();
-            lcd_set_cursor(0, 0);
-            char stop_message[20];
-			sprintf(stop_message, "Error: GPS Stoped");
-            lcd_print(stop_message, strlen(stop_message));
+			error_mode();
+
         }
     }
 }
+
 void system_gpio_init()
 {
     terminal_init(); // For communication btw PC and tiva
-    gps_init(); // For communication btw tiva and gps module
-    lcd_init();   // For displaying measured data
-	bluetooth_init();
-    //portf_pb_interrupt_init(SW1); // Enable Intruupt on pushbutton 1
+    gps_init();		 // For communication btw tiva and gps module
+    lcd_init();  	 // For displaying measured data
+	bluetooth_init();// For communication btw bluetooth module and mobile 
+    portf_pb_interrupt_init(SW1); // Enable Intruupt on pushbutton 1
     led_init(RED | GREEN | BLUE); // Initialize all leds
 }
-
+ 
 void display_distance(double distance)
 {
     char lcd_distance[20];
@@ -135,6 +141,7 @@ void waiting_mode()
     lcd_set_cursor(1, 2);
     sprintf(message, "Push SW1 to start");
     lcd_print(message, strlen(message));
+	delay_ms(800);
 }
 
 void searching_mode()
@@ -174,6 +181,7 @@ void searching_mode()
     counter++;
 }
 
+
 void reading_mode()
 {
     all_off();
@@ -188,4 +196,14 @@ void reaching_mode()
 {
     all_off();
     led_on(RED);
+}
+
+void error_mode()
+{     
+	lcd_clean();
+	lcd_set_cursor(0, 0);
+	char stop_message[20];
+	sprintf(stop_message, "Error: GPS Stoped");
+	lcd_print(stop_message, strlen(stop_message));
+	delay_ms(800);
 }

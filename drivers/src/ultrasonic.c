@@ -1,21 +1,12 @@
 #include <stdint.h>
 
 #include "TM4C123.h"
-#include "delayTimer.h"
+#include "delay_timer.h"
 #include "ultrasonic.h"
 
 
-/**
- * @file ultrasonic.c
- * @brief
- *
- * @author Hosni Adel
- * @date Mar  2021
- *
- */
-
 /***********************************************************
-                                Function Definitions
+				Function Definitions
 ***********************************************************/
 
 void ultrasonic_init(ultrasonicPFConfig pins) {
@@ -47,9 +38,9 @@ float ultrasonic_measure(void) {
 
   // trigger the trigger pin
   GPIOB->DATA &= ~0x80;
-  delayMs(30);
+  delay_ms(30);
   GPIOB->DATA |= 0x80;
-  delayMicros(10);
+  delay_ms(10);
   GPIOB->DATA &= ~0x80;
 
   // capture the first rising edge

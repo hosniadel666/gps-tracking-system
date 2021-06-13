@@ -20,12 +20,12 @@ void delay_micros(uint32_t n)
 void delay_ms(uint32_t n)
 {
 	SYSCTL->RCGCTIMER |= 0x08; 	// enable clock to Timer Block 3
-	TIMER3->CTL = 0; 			
-	TIMER3->CFG = 0x04; 		
-	TIMER3->TBMR = 0x02; 		
+	TIMER3->CTL = 0;		   
+	TIMER3->CFG = 0x04;		   
+	TIMER3->TBMR = 0x02;		
 	TIMER3->TBILR = 16000 - 1; 
-	TIMER3->ICR = 0x100; 		
-	TIMER3->CTL |= 0x0100;		
+	TIMER3->ICR = 0x100;
+	TIMER3->CTL |= 0x0100;
 	
 	for(uint32_t i = 0; i < n; i++)
 	{
